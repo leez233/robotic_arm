@@ -16,6 +16,8 @@ from gripper import Gripper
 from shapely.geometry import Point, Polygon
 import utils as tools
 
+from asr_client import get_asr_text
+
 # 配置音频参数
 FORMAT = pyaudio.paInt16
 CHANNELS = 1
@@ -162,17 +164,15 @@ def pipeline_visual(rob, gripper):
         await gripper.move(0, 255, 255)
     
     record()# 记录音频文件，文件名为output.wav
-    command = tools.stt(WAVE_OUTPUT_FILENAME)
-    print(command)
-   #  command = f"hear -d -i {WAVE_OUTPUT_FILENAME} -l zh-CN"
+
 
     try:
-        # audio_text = run_command(command)
-        audio_text = command
+        # 改为调用 get_asr_text 直接获取识别结果
+        audio_text = get_asr_text()
     except Exception:
-        print("run_command")
         raise KeyboardInterrupt
-    print(nt()+"识别语音：", audio_text.replace("\n", ""))
+    # 输出识别结果，去掉换行符
+    print("识别语音：", audio_text.replace("\n", ""))
 
     audio_text = audio_text.replace("材质刀", "裁纸刀").replace("彩纸刀", "裁纸刀").replace("才知道", "裁纸刀")
 
